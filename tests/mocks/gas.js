@@ -17,6 +17,7 @@ function createMockRange(data) {
     setNumberFormat: jest.fn(() => range),
     getNumRows: jest.fn(() => values.length),
     getNumColumns: jest.fn(() => values[0] ? values[0].length : 0),
+    clear: jest.fn(() => range),
   };
   return range;
 }
