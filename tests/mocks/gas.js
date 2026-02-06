@@ -127,6 +127,30 @@ global.UrlFetchApp = {
   })),
 };
 
+function createMockCache() {
+  const store = {};
+  const cache = {
+    get: jest.fn((key) => store[key] || null),
+    put: jest.fn((key, value, ttl) => { store[key] = value; }),
+    getAll: jest.fn((keys) => {
+      const result = {};
+      keys.forEach((k) => { if (store[k]) result[k] = store[k]; });
+      return result;
+    }),
+    putAll: jest.fn((values, ttl) => { Object.assign(store, values); }),
+    remove: jest.fn((key) => { delete store[key]; }),
+    _store: store,
+    _reset: () => { Object.keys(store).forEach((k) => delete store[k]); },
+  };
+  return cache;
+}
+
+const mockCache = createMockCache();
+
+global.CacheService = {
+  getScriptCache: jest.fn(() => mockCache),
+};
+
 global.ScriptApp = {
   newTrigger: jest.fn(() => ({
     timeBased: jest.fn(() => ({
@@ -154,4 +178,5 @@ global._gasMocks = {
   createMockMenu,
   createMockUi,
   createMockSpreadsheet,
+  createMockCache,
 };
